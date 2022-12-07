@@ -1,0 +1,14 @@
+
+server:
+  port: 8080
+  session:
+    timeout: 10
+  tomcat:
+    uri-encoding: UTF-8
+
+#币安api
+bina_key: BNsyqRmoHp3EGJm1Ivl9cvXmajnVSWLdXyiE9WRjIVGHbIEU6mrTk0Yf9ZleunLw
+bina_secret: CgWWRKg0rmXFpCUQZTabIPYbdhPElQfRAua1TQrqnRO3tFyKuRrVjF2HBk9BzGqZ
+#哥哥币安api
+#bina_key: FMsvoJ5rulpHxSwYrmnw7D5VrcMBm1dXgoBmkMAvLlGdgYFFqwlgjyKPHTq4BJvQ
+#bina_secret: oXUWLAubUZfnhWPXKaUzv7ykhuRjOjBPnOkhNhSlDLiAQBk33Ev7tiYXI9sRmveV

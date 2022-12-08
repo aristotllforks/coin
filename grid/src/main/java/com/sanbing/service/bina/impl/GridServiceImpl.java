@@ -29,7 +29,7 @@ public class GridServiceImpl implements GridService {
 
     double price = 0;
 
-    @Scheduled(fixedRate = 300)
+    @Scheduled(fixedRate = 400)
     @Override
     public void GridTransaction() {
         long startTime = System.currentTimeMillis();
@@ -74,6 +74,7 @@ public class GridServiceImpl implements GridService {
         if (position_usdt_locked > 1) {
             double current_price = Constant.BINA_SPOT_PRICE_MAP.get("buy_price");
             double buy_num = Constant.BINA_SPOT_PRICE_MAP.get("buy_num");
+            price = getOpenOrderPrice();
             if (current_price > price && buy_num > 10 * 1000000) {
                 Double quantity = (position_usdt_locked/current_price);
                 cancelOrder();
@@ -88,7 +89,7 @@ public class GridServiceImpl implements GridService {
         if (position_busd_free > 1) {
             LinkedHashMap<String, Object> params = new LinkedHashMap<>();
             price = Constant.BINA_SPOT_PRICE_MAP.get("sell_price");
-            Double quantity = (position_busd_free/price);
+            Double quantity = (position_busd_free/1);
             params.put("side", "SELL");
             params.put("quantity", Double.valueOf(quantity.intValue()));
             params.put("price", price);
@@ -101,9 +102,10 @@ public class GridServiceImpl implements GridService {
         if (position_busd_locked > 1) {
             double current_price = Constant.BINA_SPOT_PRICE_MAP.get("sell_price");
             double sell_num = Constant.BINA_SPOT_PRICE_MAP.get("sell_num");
+            price = getOpenOrderPrice();
             if (current_price < price && sell_num > 10 * 1000000) {
                 cancelOrder();
-                Double quantity = (position_busd_locked/current_price);
+                Double quantity = (position_busd_locked/1);
                 LinkedHashMap<String, Object> params = new LinkedHashMap<>();
                 params.put("side", "SELL");
                 params.put("quantity", Double.valueOf(quantity.intValue()));
@@ -167,4 +169,33 @@ public class GridServiceImpl implements GridService {
                     e.getMessage(), e.getErrMsg(), e.getErrorCode(), e.getHttpStatusCode(), e);
         }
     }
+
+    //获取当前订单价格
+    public double getOpenOrderPrice(){
+        LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
+
+        SpotClientImpl client = new SpotClientImpl(bina_key, bina_secret, Constant.BINA_SPOT_BASE_URL);
+
+        parameters.put("symbol", "BUSDUSDT");
+
+        try {
+            String result = client.createTrade().getOpenOrders(parameters);
+            if(!result.equals("[]")){
+                JSONArray array = JSONArray.parseArray(result);
+                for (int i = 0; i < array.size(); i++) {
+                    JSONObject object = array.getJSONObject(i);
+                    if ("BUSDUSDT".equals(object.getString("symbol"))) {
+                        return object.getDoubleValue("price");
+                    }
+                }
+            }
+        } catch (BinanceConnectorException e) {
+            log.error("fullErrMessage: {}", e.getMessage(), e);
+        } catch (BinanceClientException e) {
+            log.error("fullErrMessage: {} \nerrMessage: {} \nerrCode: {} \nHTTPStatusCode: {}",
+                    e.getMessage(), e.getErrMsg(), e.getErrorCode(), e.getHttpStatusCode(), e);
+        }
+        return 0;
+    }
+
 }

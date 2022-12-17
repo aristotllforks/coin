@@ -1,0 +1,12 @@
+
+server:
+  port: 8080
+  session:
+    timeout: 10
+  tomcat:
+    uri-encoding: UTF-8
+
+#火必api
+huobi_key: 6f399418-7yngd7gh5g-dbdbf07e-aa67a
+huobi_secret: 1251abfb-1ffc2035-0970fb52-bd982
+

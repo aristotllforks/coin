@@ -1,0 +1,11 @@
+
+server:
+  port: 8080
+  session:
+    timeout: 10
+  tomcat:
+    uri-encoding: UTF-8
+
+#钉钉消息
+Webhook: https://oapi.dingtalk.com/robot/send?access_token=a74a3fb014087835232fee2a010060ac3c93fb1ab83d8cf6272d6d8c056796bc
+

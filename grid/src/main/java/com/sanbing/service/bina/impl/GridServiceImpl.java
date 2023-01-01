@@ -57,7 +57,7 @@ public class GridServiceImpl implements GridService {
         }
 
         //仓位为usdt(未锁定)
-        if (position_usdt_free > 1) {
+        if (position_usdt_free > 10) {
             LinkedHashMap<String, Object> params = new LinkedHashMap<>();
             price = Constant.BINA_SPOT_PRICE_MAP.get("buy_price");
             Double quantity = (position_usdt_free/price);
@@ -71,7 +71,7 @@ public class GridServiceImpl implements GridService {
 
         }
         //仓位为usdt(锁定)
-        if (position_usdt_locked > 1) {
+        if (position_usdt_locked > 10) {
             double current_price = Constant.BINA_SPOT_PRICE_MAP.get("buy_price");
             double buy_num = Constant.BINA_SPOT_PRICE_MAP.get("buy_num");
             price = getOpenOrderPrice();
@@ -86,7 +86,7 @@ public class GridServiceImpl implements GridService {
             }
         }
         //仓位为busd(未锁定)
-        if (position_busd_free > 1) {
+        if (position_busd_free > 10) {
             LinkedHashMap<String, Object> params = new LinkedHashMap<>();
             price = Constant.BINA_SPOT_PRICE_MAP.get("sell_price");
             Double quantity = (position_busd_free/1);
@@ -99,7 +99,7 @@ public class GridServiceImpl implements GridService {
 
         }
         //仓位为busd(锁定)
-        if (position_busd_locked > 1) {
+        if (position_busd_locked > 10) {
             double current_price = Constant.BINA_SPOT_PRICE_MAP.get("sell_price");
             double sell_num = Constant.BINA_SPOT_PRICE_MAP.get("sell_num");
             price = getOpenOrderPrice();

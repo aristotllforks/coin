@@ -29,9 +29,10 @@ public class GridServiceImpl implements GridService {
 
     double price = 0;
 
-    @Scheduled(fixedRate = 400)
+    @Scheduled(fixedRate = 500)
     @Override
     public void GridTransaction() {
+        if (Constant.BINA_SPOT_PRICE_MAP.size() == 0) return;
         long startTime = System.currentTimeMillis();
         //获取现货仓位
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
@@ -60,11 +61,11 @@ public class GridServiceImpl implements GridService {
         if (position_usdt_free > 10) {
             LinkedHashMap<String, Object> params = new LinkedHashMap<>();
             price = Constant.BINA_SPOT_PRICE_MAP.get("buy_price");
-            Double quantity = (position_usdt_free/price);
+            Double quantity = (position_usdt_free / price);
             params.put("side", "BUY");
             params.put("quantity", Double.valueOf(quantity.intValue()));
             params.put("price", price);
-            if(position_busd_locked<1){
+            if (position_busd_locked < 1) {
                 newOrder(params);
             }
 
@@ -76,7 +77,7 @@ public class GridServiceImpl implements GridService {
             double buy_num = Constant.BINA_SPOT_PRICE_MAP.get("buy_num");
             price = getOpenOrderPrice();
             if (current_price > price && buy_num > 10 * 1000000) {
-                Double quantity = (position_usdt_locked/current_price);
+                Double quantity = (position_usdt_locked / current_price);
                 cancelOrder();
                 LinkedHashMap<String, Object> params = new LinkedHashMap<>();
                 params.put("side", "BUY");
@@ -89,11 +90,11 @@ public class GridServiceImpl implements GridService {
         if (position_busd_free > 10) {
             LinkedHashMap<String, Object> params = new LinkedHashMap<>();
             price = Constant.BINA_SPOT_PRICE_MAP.get("sell_price");
-            Double quantity = (position_busd_free/1);
+            Double quantity = (position_busd_free / 1);
             params.put("side", "SELL");
             params.put("quantity", Double.valueOf(quantity.intValue()));
             params.put("price", price);
-            if(position_usdt_locked<1){
+            if (position_usdt_locked < 1) {
                 newOrder(params);
             }
 
@@ -105,7 +106,7 @@ public class GridServiceImpl implements GridService {
             price = getOpenOrderPrice();
             if (current_price < price && sell_num > 10 * 1000000) {
                 cancelOrder();
-                Double quantity = (position_busd_locked/1);
+                Double quantity = (position_busd_locked / 1);
                 LinkedHashMap<String, Object> params = new LinkedHashMap<>();
                 params.put("side", "SELL");
                 params.put("quantity", Double.valueOf(quantity.intValue()));
@@ -117,7 +118,7 @@ public class GridServiceImpl implements GridService {
 //        log.info(""+(endTime-startTime));
     }
 
-    @PostConstruct
+    @Scheduled(fixedRate = 60 * 60 * 1000)
     @Override
     public void getMarketData() {
         WebsocketClientImpl client = new WebsocketClientImpl();
@@ -152,7 +153,7 @@ public class GridServiceImpl implements GridService {
     }
 
     //撤单
-    public void cancelOrder(){
+    public void cancelOrder() {
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
 
         SpotClientImpl client = new SpotClientImpl(bina_key, bina_secret, Constant.BINA_SPOT_BASE_URL);
@@ -171,7 +172,7 @@ public class GridServiceImpl implements GridService {
     }
 
     //获取当前订单价格
-    public double getOpenOrderPrice(){
+    public double getOpenOrderPrice() {
         LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
 
         SpotClientImpl client = new SpotClientImpl(bina_key, bina_secret, Constant.BINA_SPOT_BASE_URL);
@@ -180,7 +181,7 @@ public class GridServiceImpl implements GridService {
 
         try {
             String result = client.createTrade().getOpenOrders(parameters);
-            if(!result.equals("[]")){
+            if (!result.equals("[]")) {
                 JSONArray array = JSONArray.parseArray(result);
                 for (int i = 0; i < array.size(); i++) {
                     JSONObject object = array.getJSONObject(i);
